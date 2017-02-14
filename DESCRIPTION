@@ -1,0 +1,16 @@
+Package: phangornMCMC
+Version: 0.1.0
+Type: Package
+Title: phangorn MCMC
+Authors@R: c(person("Schliep", "Klaus", role = c("aut", "cre", "cph"), email = "klaus.schliep@gmail.com"))
+Depends: ape, coda, lattice, rstan
+Imports: Matrix, phangorn, stats
+Description: Flexible framework for phylogenetic MCMC analyses in R. 
+It includes a main function running the  MCMC algorithm, 
+auxiliary functions for tree rearrangement, and some functions 
+to compute population genetic parameters.
+License: GPL (>= 2)
+Author: Klaus Schliep [aut, cre, cph]
+Maintainer: Klaus Schliep <klaus.schliep@gmail.com>
+NeedsCompilation: yes
+LazyData: true
