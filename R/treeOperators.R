@@ -9,9 +9,6 @@
 
 
 ##   Trees Operators for Running MCMC
-
-## Copyright 2012-2014 Emmanuel Paradis
-
 ## This file is part of the R-package `coalescentMCMC'.
 ## See the file ../COPYING for licensing issues.
 
