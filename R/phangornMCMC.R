@@ -1,17 +1,10 @@
-### shinyjs deanattali, DrBats
-### SentimentAnalysis
-## coalescentMCMC.R (2013-12-13)
-
-##   Run MCMC for Coalescent Trees
-
-## Copyright 2012-2013 Emmanuel Paradis
+## based on coalescentMCMC from Emmanuel Paradis
 
 ## This file is part of the R-package `coalescentMCMC'.
 ## See the file ../COPYING for licensing issues.
 
-coalescentMCMC <-
-    function(x, ntrees = 3000, burnin = 1000, frequency = 1,
-             tree0 = NULL, model = NULL, printevery = 100)
+phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
+    tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6))
 {
     on.exit({
         pml.free()
@@ -50,29 +43,28 @@ coalescentMCMC <-
     verbose <- as.logical(printevery)
 
     if (is.null(tree0)) {
-        d <- dist.dna(x, "JC69")
-        tree0 <- as.phylo(hclust(d, "average"))
+        d <- dist.ml(x)
+        tree0 <- upgma(dm)
     }
 
-    X <- phyDat(x)
+    x <- phyDat(x)
     n <- length(tree0$tip.label)
     nodeMax <- 2*n - 1
     nOut <- ntrees
     nOut2 <- ntrees * frequency + burnin
 
-    INV <- Matrix(lli(X, tree0), sparse = TRUE)
-    ll.0 <- numeric(attr(X, "nr"))
-    ## by Klaus (ensures that tip labels of tree and data have same order):
-    X <- subset(X, tree0$tip.label)
+    INV <- Matrix(lli(x, tree0), sparse = TRUE)
+    ll.0 <- numeric(attr(x, "nr"))
+
+    x <- subset(x, tree0$tip.label)
     ##
-    bf <- rep(0.25, 4)
     eig <- edQt()
     pml.init(X)
-    getlogLik <- function(phy, X) {
+    getlogLik_reorder <- function(phy, X) {
         phy <- reorder(phy, "postorder")
         pml.fit(phy, X, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
     }
-    
+
     TREES <- vector("list", nOut)
     LL <- numeric(nOut2)
     TREES[[1L]] <- tree0

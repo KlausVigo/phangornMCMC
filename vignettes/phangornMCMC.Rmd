@@ -1,0 +1,29 @@
+---
+title: "phangornMCMC"
+author: "Klaus Schliep"
+date: "March 19, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## MCMC algorithm
+
+Adopted from Yang 2014
+
+1. Start with random (unrooted or ultrametric) tree T with set of branch length.
+    better start with fastME or UPGMA / WPGMA tree
+    coalescentMCMC
+2. Iterate the following steps:
+    a. Propose tree rearrangement
+        start with NNI from colaescentMCMC
+    b. Propose changes to edge weights
+        sliding window??
+    c. Propose changes to substitution parameter (bf and Q)
+        bf (TODO) dirichlet
+        Q (TODO) dirichlet
+    d. Propose changes to gamma rate or invariant sites
+    e. Every k iteration, sample the chain save tree and parameters
+3. At the end summarize results
