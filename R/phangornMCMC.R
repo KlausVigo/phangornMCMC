@@ -3,8 +3,27 @@
 ## This file is part of the R-package `coalescentMCMC'.
 ## See the file ../COPYING for licensing issues.
 
+
+
+#' phangornMCMC
+#' This function runs a Markov chain Monte Carlo (MCMC) algorithm to generate a
+#' set of trees which is returned with their likelihoods.
+#'
+#' @param x a set of DNA sequences, typically an object of class "DNAbin" or "phyDat".
+#' @param ntrees the number of trees to output.
+#' @param burnin the number of trees to discard as “burn-in”.
+#' @param frequency the frequency at which trees are sampled.
+#' @param tree0 the initial tree of the chain; by default, a fastME / UPGMA (un-) tree
+#' from a JC69 distance is generated.
+#' @param model the transition model
+#' @param printevery an integer specifying the frequency at which to print the numbers of trees proposed and accepted; set to 0 to cancel all printings.
+#' @param bf base frequencies
+#' @param Q rate matrix
+#'
+#'
+#'
 phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
-    tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6))
+    tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6), rooted=TRUE)
 {
     on.exit({
         pml.free()
@@ -43,8 +62,9 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     verbose <- as.logical(printevery)
 
     if (is.null(tree0)) {
-        d <- dist.ml(x)
-        tree0 <- upgma(dm)
+        dm <- dist.ml(x)
+        if(rooted)tree0 <- upgma(dm)
+        else tree0 <- fastme.bal(dm, nni = TRUE, spr = FALSE, tbr = FALSE)
     }
 
     x <- phyDat(x)
@@ -58,17 +78,17 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
 
     x <- subset(x, tree0$tip.label)
     ##
-    eig <- edQt()
-    pml.init(X)
-    getlogLik_reorder <- function(phy, X) {
+    eig <- edQt(Q, bf)
+    pml.init(x)
+    getlogLik <- function(phy, x) {
         phy <- reorder(phy, "postorder")
-        pml.fit(phy, X, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
+        pml.fit(phy, x, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
     }
 
     TREES <- vector("list", nOut)
     LL <- numeric(nOut2)
     TREES[[1L]] <- tree0
-    lnL0 <- getlogLik(tree0, X)
+    lnL0 <- getlogLik(tree0, x)
     LL[1L] <- lnL0
 
     if (is.null(model)) {
@@ -160,7 +180,7 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
             k <- k + 1L
             TREES[[k]] <- tr.b
         }
-        lnL.b <- getlogLik(tr.b, X)
+        lnL.b <- getlogLik(tr.b, x)
         LL[i] <- lnL.b
         ## calculate theta for the proposed tree:
         bt <- branching.times(tr.b)

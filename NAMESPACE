@@ -1,1 +1,5 @@
 exportPattern("^[[:alpha:]]+")
+
+importFrom(magrittr,"%>%", "%<>%")
+importFrom(Matrix, Matrix, sparseMatrix, spMatrix, crossprod, solve)
+
