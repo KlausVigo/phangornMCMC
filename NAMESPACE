@@ -1,7 +1,18 @@
-useDynLib(coalescentMCMC, .registration = TRUE)
+useDynLib(phangorntMCMC, .registration = TRUE)
 
-exportPattern("^[[:alpha:]]+")
 
+export(.coalescentMCMCenv, cleanMCMCtrees, coalescentMCMC, dcoal,
+       dcoal.linear, dcoal.step, dcoal.time, dcoal.time2,
+       EdgeLengthJittering, getLastTree, getMCMCstats, getMCMCtrees,
+       NeighborhoodRearrangement, saveMCMCtrees, sim.coalescent,
+       TipInterchange)
+
+importFrom(ape, as.phylo, branching.times, dist.dna, Ntip,
+           reorder.phylo, write.nexus, write.tree)
+importFrom(coda, mcmc)
+importFrom(phangorn, phyDat, pml)
+importFrom(stats, hclust, rbinom, reorder, runif, rgamma)
+importFrom(lattice, histogram)
 importFrom(magrittr,"%>%", "%<>%")
 importFrom(Matrix, Matrix, sparseMatrix, spMatrix, crossprod, solve)
 

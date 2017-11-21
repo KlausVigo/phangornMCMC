@@ -1,8 +1,8 @@
-/* coalescentMCMC.c (2013-08-13) */
+/* phangornMCMC.c (2013-08-13) */
 
 /* Copyright 2012-2013 Emmanuel Paradis
 
-/* This file is part of the R-package `coalescentMCMC'. */
+/* This file copied of the R-package `coalescentMCMC'. */
 /* See the file ../COPYING for licensing issues. */
 
 #include <R.h>
@@ -25,14 +25,4 @@ void get_two_index_integer(int *x, int *val, int *index)
 	index[1] = i2 + 1;
 }
 
-static R_CMethodDef C_entries[] = {
-    {"get_single_index_integer", (DL_FUNC) &get_single_index_integer, 3},
-    {"get_two_index_integer", (DL_FUNC) &get_two_index_integer, 3},
-    {NULL, NULL, 0}
-};
 
-void R_init_phangornMCMC(DllInfo *info)
-{
-    R_registerRoutines(info, C_entries, NULL, NULL, NULL);
-    R_useDynamicSymbols(info, FALSE);
-}
