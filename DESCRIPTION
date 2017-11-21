@@ -1,6 +1,5 @@
 Package: phangornMCMC
-Version: 0.4-2
-Date: 2016-07-01
+Version: 0.0-1
 Title: phangorn MCMC
 Authors@R: c(person("Schliep", "Klaus", role = c("aut", "cre", "cph"), email = "klaus.schliep@gmail.com"))
 Depends: ape, coda, lattice, phangorn
