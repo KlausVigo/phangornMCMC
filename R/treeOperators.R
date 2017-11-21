@@ -12,14 +12,14 @@
 ## This file is part of the R-package `coalescentMCMC'.
 ## See the file ../COPYING for licensing issues.
 
-getIndexEdge <- function(tip, edge)
-    ## 'integer(1)' mustn't be substituted by '0L' except if 'DUP = TRUE':
-    .C(get_single_index_integer, as.integer(edge[, 2L]),
-       as.integer(tip), integer(1L), NAOK = TRUE)[[3L]]
+getIndexEdge <- function(tip, edge) match(tip, tree$edge[,2])
+## 'integer(1)' mustn't be substituted by '0L' except if 'DUP = TRUE':
+##    .C(get_single_index_integer, as.integer(edge[, 2L]),
+##       as.integer(tip), integer(1L), NAOK = TRUE)[[3L]]
 
-getIndexEdge2 <- function(node, edge)
-    .C(get_two_index_integer, as.integer(edge[, 1L]),
-       as.integer(node), integer(2L), NAOK = TRUE)[[3L]]
+getIndexEdge2 <- function(node, edge) which(edge[,1] %in% node)
+##    .C(get_two_index_integer, as.integer(edge[, 1L]),
+##       as.integer(node), integer(2L), NAOK = TRUE)[[3L]]
 
 NeighborhoodRearrangement <- function(phy, n, nodeMax, target, THETA, brtimes)
 {
