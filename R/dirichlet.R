@@ -1,6 +1,33 @@
-#
-# adopted from gtools
-#
+#' Dirichlet distribution
+#'
+#' Density and random generation for the Dirichlet distribution with mean equal
+#' to mean and standard deviation equal to sd.
+#'
+#' The Dirichlet is the multidimensional of the bet distribution and the
+#' canonical Bayesian Distribution for the parameters of a multinomial
+#' distribution. \code{rdirichlet1(alpha)} is a shortcut for
+#' \code{rdirichlet(1, alpha)}
+#'
+#' @param x A vector containing a single random deviate or matrix containg one
+#' random deviate per row.
+#' @param n Number of random vectors to generate.
+#' @param alpha Vector or (for ddirichlet) matrix containing shape parameters.
+#' @author Code original posted by Ben Bolker to R-News on Fri Dec 15 2000. See
+#' https://stat.ethz.ch/pipermail/r-help/2000-December/009561.html. Ben
+#' attributed the code to Ian Wilson i.wilson@maths.abdn.ac.uk. Subsequent
+#' modifications by Gregory R. Warnes greg@warnes.net.
+#'
+#' @seealso \code{\link{dbeta}}, \code{\link{rbeta}}
+#' @keywords cluster ~kwd2
+#' @examples
+#'
+#' set.seed(42)
+#' rdirichlet(5, c(1,1,1) )
+#' set.seed(42)
+#' rdirichlet1(c(1,1,1))
+#'
+#' @rdname rdirichlet
+#' @export
 rdirichlet <- function (n, alpha)
 {
     l <- length(alpha)
@@ -10,6 +37,18 @@ rdirichlet <- function (n, alpha)
 }
 
 
+#' @rdname rdirichlet
+#' @export
+rdirichlet1 <- function (alpha)
+{
+    l <- length(alpha)
+    x <- rgamma(l, alpha)
+    x/sum(x)
+}
+
+
+#' @rdname rdirichlet
+#' @export
 ddirichlet <- function (x, alpha)
 {
     dirichlet1 <- function(x, alpha) {
