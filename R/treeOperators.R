@@ -12,7 +12,7 @@
 ## This file is part of the R-package `coalescentMCMC'.
 ## See the file ../COPYING for licensing issues.
 
-getIndexEdge <- function(tip, edge) match(tip, tree$edge[,2])
+getIndexEdge <- function(tip, edge) match(tip, edge[,2])
 ## 'integer(1)' mustn't be substituted by '0L' except if 'DUP = TRUE':
 ##    .C(get_single_index_integer, as.integer(edge[, 2L]),
 ##       as.integer(tip), integer(1L), NAOK = TRUE)[[3L]]

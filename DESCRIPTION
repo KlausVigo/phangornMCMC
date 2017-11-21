@@ -2,9 +2,8 @@ Package: phangornMCMC
 Version: 0.0-1
 Title: phangorn MCMC
 Authors@R: c(person("Schliep", "Klaus", role = c("aut", "cre", "cph"), email = "klaus.schliep@gmail.com"))
-Depends: ape, coda, lattice, phangorn
-Imports: Matrix, stats, magrittr
-ZipData: no
+Depends: ape, coda, lattice
+Imports: Matrix, phangorn, stats, magrittr
 Description: A simple phylogenetic MCMC program.
 License: GPL (>= 2)
 Author: Klaus Schliep [aut, cre, cph]

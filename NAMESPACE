@@ -1,17 +1,16 @@
-useDynLib(phangorntMCMC, .registration = TRUE)
 
-
-export(.coalescentMCMCenv, cleanMCMCtrees, coalescentMCMC, dcoal,
+export(.phangornMCMCenv, cleanMCMCtrees, phangornMCMC, dcoal,
        dcoal.linear, dcoal.step, dcoal.time, dcoal.time2,
        EdgeLengthJittering, getLastTree, getMCMCstats, getMCMCtrees,
-       NeighborhoodRearrangement, saveMCMCtrees, sim.coalescent,
-       TipInterchange)
+       NeighborhoodRearrangement, saveMCMCtrees,
+       TipInterchange, ddirichlet, rdirichlet, rdirichlet1)
 
 importFrom(ape, as.phylo, branching.times, dist.dna, Ntip,
-           reorder.phylo, write.nexus, write.tree)
+           reorder.phylo, write.nexus, write.tree, fastme.bal)
 importFrom(coda, mcmc)
-importFrom(phangorn, phyDat, pml)
-importFrom(stats, hclust, rbinom, reorder, runif, rgamma)
+importFrom(phangorn, phyDat, pml, upgma, pml.fit, pml.free, pml.init, baseFreq,
+           dist.ml, lli, edQt)
+importFrom(stats, hclust, rbinom, reorder, runif, rgamma, nlminb)
 importFrom(lattice, histogram)
 importFrom(magrittr,"%>%", "%<>%")
 importFrom(Matrix, Matrix, sparseMatrix, spMatrix, crossprod, solve)
