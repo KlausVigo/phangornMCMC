@@ -31,7 +31,7 @@ static R_CMethodDef C_entries[] = {
     {NULL, NULL, 0}
 };
 
-void R_init_coalescentMCMC(DllInfo *info)
+void R_init_phangornMCMC(DllInfo *info)
 {
     R_registerRoutines(info, C_entries, NULL, NULL, NULL);
     R_useDynamicSymbols(info, FALSE);
