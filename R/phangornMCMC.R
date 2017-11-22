@@ -23,7 +23,8 @@
 #'
 #'
 phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
-    tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6), rooted=TRUE)
+    tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6),
+    optBf = TRUE, optQ = TRUE, rooted=TRUE)
 {
     on.exit({
         pml.free()
@@ -31,6 +32,8 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
             if (!k) stop("burn-in period not yet finished")
             TREES <- TREES[seq_len(k)]
             LL <- LL[seq_len(i)]
+            if(optBf) BF <- BF[seq_len(i),]
+            if(optQ) QQ <- QQ[seq_len(i),]
             params <- params[seq_len(i), ]
             warning(paste("MCMC interrupted after", i, "generations"))
         }
@@ -45,13 +48,16 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
             suffix <- 1 + as.numeric(sub("TREES_", "", list.trees[l]))
         suffix <- sprintf("%03d", suffix)
         assign(paste("TREES", suffix, sep = "_"), TREES,
-               envir = .coalescentMCMCenv)
+               envir = .phangornMCMCenv)
 
         i <- i - 1L
 
-        MCMCstats <- get("MCMCstats", envir = .coalescentMCMCenv)
+
+        if(optBf) assign("BF", envir = .phangornMCMCenv)
+
+        MCMCstats <- get("MCMCstats", envir = .phangornMCMCenv)
         MCMCstats[[suffix]] <- c(k, burnin, frequency, i, j)
-        assign("MCMCstats", MCMCstats, envir = .coalescentMCMCenv)
+        assign("MCMCstats", MCMCstats, envir = .phangornMCMCenv)
 
         LL <- cbind(LL, params)
         colnames(LL) <- c("logLik", para.nms)
@@ -86,6 +92,15 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     }
 
     TREES <- vector("list", nOut)
+    if(optBf){
+        BF <- matrix(NA_real_, nOut, length(bf))
+        BF[1,] <- bf
+    }
+    if(optQ){
+        QQ <- matrix(NA_real_, nOut, length(Q))
+        QQ[1,] <- Q
+    }
+
     LL <- numeric(nOut2)
     TREES[[1L]] <- tree0
     lnL0 <- getlogLik(tree0, x)
@@ -197,12 +212,28 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
             para0 <- para
             bt0 <- bt
         }
+        if(optBf){
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
     }
     if (verbose) cat("\nDone.\n")
 }
 
 .get.list.trees <- function()
-    ls(envir = .coalescentMCMCenv, pattern = "^TREES_")
+    ls(envir = .phangornMCMCenv, pattern = "^TREES_")
 
 getMCMCtrees <- function(chain = NULL)
 {
@@ -211,7 +242,7 @@ getMCMCtrees <- function(chain = NULL)
     if (is.null(chain)) {
         if (!l) return(NULL)
         if (l == 1)
-            return(get(list.trees, envir = .coalescentMCMCenv))
+            return(get(list.trees, envir = .phangornMCMCenv))
         ## l > 1:
         cat("Several lists of MCMC trees are stored:\n\n")
         for (i in 1:l) cat(i, ":", list.trees[i], "\n")
@@ -228,7 +259,7 @@ getMCMCtrees <- function(chain = NULL)
         }
     }
     get(paste("TREES", sprintf("%03d", chain), sep = "_"),
-        envir = .coalescentMCMCenv)
+        envir = .phangornMCMCenv)
 }
 
 saveMCMCtrees <- function(destdir = ".", format = "RDS", ...)
@@ -250,18 +281,18 @@ saveMCMCtrees <- function(destdir = ".", format = "RDS", ...)
         for (i in 1:l) {
             f <- list.trees[i]
             outfile <- paste(destdir, "/", f, suffix, sep = "")
-            FUN(get(f, envir = .coalescentMCMCenv), outfile, ...)
+            FUN(get(f, envir = .phangornMCMCenv), outfile, ...)
         }
     }
 }
 
 cleanMCMCtrees <- function()
-    rm(list = .get.list.trees(), envir = .coalescentMCMCenv)
+    rm(list = .get.list.trees(), envir = .phangornMCMCenv)
 
 getLastTree <- function(X) X[[length(X)]]
 
 getMCMCstats <- function()
 {
     cat("MCMC chain summaries (chains as columns):\n\n")
-    get("MCMCstats", envir = .coalescentMCMCenv)
+    get("MCMCstats", envir = .phangornMCMCenv)
 }

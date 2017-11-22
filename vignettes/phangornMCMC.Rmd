@@ -11,6 +11,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## MCMC algorithm
 
+phangornMCMC is implements several Bayesian phylogenetics in R. It is a branch 
+of coalescentMCMC of Emmanual Paradis. The implementation is rather inefficient 
+and slow and does not target to compete for speed with other MCMC software like 
+RevBayes, MrBayes, BPP or BEAST. It is targeted for teaching purposes.   
+
 Adopted from Yang 2014
 
 1. Start with random (unrooted or ultrametric) tree T with set of branch length.
@@ -20,10 +25,21 @@ Adopted from Yang 2014
     a. Propose tree rearrangement
         start with NNI from colaescentMCMC
     b. Propose changes to edge weights
-        sliding window??
+        sliding window?? (TODO)
     c. Propose changes to substitution parameter (bf and Q)
         bf (TODO) dirichlet
         Q (TODO) dirichlet
     d. Propose changes to gamma rate or invariant sites
     e. Every k iteration, sample the chain save tree and parameters
 3. At the end summarize results
+
+
+
+## Priors for the different parameters 
+
+| Data type   | State frequencies | Substitution rates |
+|-------------|-------------------|--------------------| 
+| Nucleotides | fixed / estimated | fixed / estimated  |
+|             | (Dirichlet)       | (Dirichlet)        |
+
+

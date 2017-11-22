@@ -8,7 +8,7 @@ set of trees which is returned with their likelihoods.}
 \usage{
 phangornMCMC(x, ntrees = 3000, burnin = 1000, frequency = 1,
   tree0 = NULL, model = NULL, printevery = 100, bf = baseFreq(x),
-  Q = rep(1, 6), rooted = TRUE)
+  Q = rep(1, 6), optBf = TRUE, optQ = TRUE, rooted = TRUE)
 }
 \arguments{
 \item{x}{a set of DNA sequences, typically an object of class "DNAbin" or "phyDat".}
