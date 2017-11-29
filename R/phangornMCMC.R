@@ -20,6 +20,7 @@
 #'
 #' @examples
 #' \dontrun{
+#' require(phangorn)
 #' data(yeast)
 #' out <- phangornMCMC(yeast)
 #' plot(out)
@@ -28,7 +29,7 @@
 #'
 phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6),
-    optBf = TRUE, optQ = TRUE, rooted=TRUE)
+    optBf = FALSE, optQ = FALSE, rooted=TRUE)
 {
     on.exit({
         pml.free()
@@ -77,11 +78,11 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
         else tree0 <- fastme.bal(dm, nni = TRUE, spr = FALSE, tbr = FALSE)
     }
     # ~ 2 * minimal length
-    lamda_edge <- fitch(tree0) / (sum(attr(x, "weight")) * Ntip(tree0))
+    n <- nTip <- length(tree0$tip.label)
+    lamda_edge <- fitch(tree0, x) / (sum(attr(x, "weight")) * Ntip(tree0))
 
-    n <- length(tree0$tip.label)
     nstates <- length(bf)
-    nodeMax <- 2*n - 1
+    nodeMax <- 2L * nTip - 2L + rooted
     nOut <- ntrees
     nOut2 <- ntrees * frequency + burnin
 
@@ -93,7 +94,6 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     eig <- edQt(Q, bf)
     pml.init(x)
     getlogLik <- function(phy, x) {
-        phy <- reorder(phy, "postorder")
         pml.fit(phy, x, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
     }
 
@@ -112,57 +112,6 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     lnL0 <- getlogLik(tree0, x)
     LL[1L] <- lnL0
 
-    if (is.null(model)) {
-        np <- 1L
-        para.nms <- "theta"
-        ## quantities to calculate THETA:
-        two2n <- 2:n
-        K4theta <- length(two2n)
-        tmp <- two2n * (two2n - 1) # == 2 * choose(two2n, 2)
-        getparams <- function(phy, bt) {
-            x4theta <- rev(diff(c(0, sort(bt))))
-            sum(x4theta * tmp)/K4theta
-        }
-        f.theta <- function(t, p) p
-    } else {
-        switch(model, time = {
-            np <- 2L
-            para.nms <- c("theta0", "rho")
-            getparams <- function(phy, bt) { # 'bt' is not used but is needed to have the same arguments than above
-                halfdev <- function(p) {
-                    if (any(p <= 0) || any(is.nan(p))) return(1e100)
-                    -dcoal.time(phy, p[1], p[2], log = TRUE)
-                }
-                out <- nlminb(c(0.02, 0), halfdev)
-                out$par
-            }
-            f.theta <- function(t, p) p[1] * exp(p[2] * t)
-        }, step = {
-            np <- 3L
-            para.nms <- c("theta0", "theta1", "tau")
-            getparams <- function(phy, bt) {
-                halfdev <- function(p) {
-                    if (any(p <= 0) || any(is.nan(p))) return(1e100)
-                    -dcoal.step(phy, p[1], p[2], p[3], log = TRUE)
-                }
-                out <- nlminb(c(0.02, 0.02, bt[1]/2), halfdev)
-                out$par
-            }
-            f.theta <- function(t, p) ifelse(t <= p[3], p[1], p[2])
-        }, linear = {
-            np <- 3L
-            para.nms <- c("theta0", "thetaT", "TMRCA")
-            getparams <- function(phy, bt) {
-                halfdev <- function(p) {
-                    if (any(p <= 0) || any(is.nan(p))) return(1e100)
-                    -dcoal.linear(phy, p[1], p[2], p[3], log = TRUE)
-                }
-                out <- nlminb(c(0.02, 0.02, bt[1]), halfdev)
-                out$par
-            }
-            f.theta <- function(t, p) p[1] + t * (p[2] - p[1])/p[3]
-        })
-    }
     params <- matrix(0, nOut2, np)
 
     i <- 2L
@@ -222,8 +171,8 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
         }
 
         if(optBf){
-            bftmp <- rdirichlet1(nstates)
-            lltmp <- pml.fit(phy, x, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
+#            bftmp <- rdirichlet1(nstates)
+#            lltmp <- pml.fit(phy, x, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
 
         }
 
