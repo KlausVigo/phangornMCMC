@@ -11,7 +11,7 @@ phangornMCMC(x, ntrees = 3000, burnin = 1000, frequency = 1,
   Q = rep(1, 6), optBf = TRUE, optQ = TRUE, rooted = TRUE)
 }
 \arguments{
-\item{x}{a set of DNA sequences, typically an object of class "DNAbin" or "phyDat".}
+\item{x}{a set of DNA sequences, typically an object of class "DNAbin".}
 
 \item{ntrees}{the number of trees to output.}
 
@@ -19,12 +19,13 @@ phangornMCMC(x, ntrees = 3000, burnin = 1000, frequency = 1,
 
 \item{frequency}{the frequency at which trees are sampled.}
 
-\item{tree0}{the initial tree of the chain; by default, a fastME / UPGMA (un-) tree
+\item{tree0}{the initial tree of the chain; by default, a fastME / UPGMA tree
 from a JC69 distance is generated.}
 
 \item{model}{the transition model}
 
-\item{printevery}{an integer specifying the frequency at which to print the numbers of trees proposed and accepted; set to 0 to cancel all printings.}
+\item{printevery}{an integer specifying the frequency at which to print the
+numbers of trees proposed and accepted; set to 0 to cancel all printings.}
 
 \item{bf}{base frequencies}
 
@@ -34,4 +35,13 @@ from a JC69 distance is generated.}
 phangornMCMC
 This function runs a Markov chain Monte Carlo (MCMC) algorithm to generate a
 set of trees which is returned with their likelihoods.
+}
+\examples{
+\dontrun{
+data(yeast)
+out <- phangornMCMC(yeast)
+plot(out)
+getMCMCtrees()
+}
+
 }

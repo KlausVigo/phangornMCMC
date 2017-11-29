@@ -1,26 +1,30 @@
 ## based on coalescentMCMC from Emmanuel Paradis
 
 ## This file is part of the R-package `coalescentMCMC'.
-## See the file ../COPYING for licensing issues.
-
-
 
 #' phangornMCMC
 #' This function runs a Markov chain Monte Carlo (MCMC) algorithm to generate a
 #' set of trees which is returned with their likelihoods.
 #'
-#' @param x a set of DNA sequences, typically an object of class "DNAbin" or "phyDat".
+#' @param x a set of DNA sequences, typically an object of class "DNAbin".
 #' @param ntrees the number of trees to output.
 #' @param burnin the number of trees to discard as “burn-in”.
 #' @param frequency the frequency at which trees are sampled.
-#' @param tree0 the initial tree of the chain; by default, a fastME / UPGMA (un-) tree
+#' @param tree0 the initial tree of the chain; by default, a fastME / UPGMA tree
 #' from a JC69 distance is generated.
 #' @param model the transition model
-#' @param printevery an integer specifying the frequency at which to print the numbers of trees proposed and accepted; set to 0 to cancel all printings.
+#' @param printevery an integer specifying the frequency at which to print the
+#' numbers of trees proposed and accepted; set to 0 to cancel all printings.
 #' @param bf base frequencies
 #' @param Q rate matrix
 #'
-#'
+#' @examples
+#' \dontrun{
+#' data(yeast)
+#' out <- phangornMCMC(yeast)
+#' plot(out)
+#' getMCMCtrees()
+#' }
 #'
 phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6),
@@ -72,8 +76,9 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
         if(rooted)tree0 <- upgma(dm)
         else tree0 <- fastme.bal(dm, nni = TRUE, spr = FALSE, tbr = FALSE)
     }
+    # ~ 2 * minimal length
+    lamda_edge <- fitch(tree0) / (sum(attr(x, "weight")) * Ntip(tree0))
 
-    x <- phyDat(x)
     n <- length(tree0$tip.label)
     nstates <- length(bf)
     nodeMax <- 2*n - 1
