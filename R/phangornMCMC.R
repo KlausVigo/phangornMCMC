@@ -75,6 +75,7 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
 
     x <- phyDat(x)
     n <- length(tree0$tip.label)
+    nstates <- length(bf)
     nodeMax <- 2*n - 1
     nOut <- ntrees
     nOut2 <- ntrees * frequency + burnin
@@ -181,6 +182,8 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
         if (verbose) if (! i %% printevery)
             cat("\r  ", i, "                ", j, "           ")
 
+        # tree rearrangements rooted trees
+
         ## select one internal node excluding the root:
         target <- sample(nodesToSample, 1L) # target node for rearrangement
         THETA <- f.theta(bt0[target - n], para0) # the value of THETA at this node
@@ -212,20 +215,12 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
             para0 <- para
             bt0 <- bt
         }
+
         if(optBf){
-
-
-
-
+            bftmp <- rdirichlet1(nstates)
+            lltmp <- pml.fit(phy, x, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
 
         }
-
-
-
-
-
-
-
 
 
     }
