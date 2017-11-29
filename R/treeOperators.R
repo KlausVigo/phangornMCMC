@@ -67,23 +67,10 @@ NeighborhoodRearrangement <- function(phy, n, nodeMax, target, THETA, brtimes)
     sndcol <- phy$edge[, 2L] > n
     phy$edge[sndcol, 2L] <- newNb[phy$edge[sndcol, 2L]] <- (n + 2):nodeMax
     phy$edge[, 1L] <- newNb[phy$edge[, 1L]]
+    phy <- reorder(phy, "postorder")
     phy
 }
 
-TipInterchange <- function(phy, n)
-{
-    e <- phy$edge
-    repeat {
-        k <- sample.int(n, size = 2L)
-        i1 <- getIndexEdge(k[1], e)
-        i2 <- getIndexEdge(k[2], e)
-        ## check that the two tips in 'k' are not sisters
-        if (e[i1, 1L] != e[i2, 1L]) break
-    }
-    e[c(i2, i1), 2L] <- k
-    phy$edge <- e
-    phy
-}
 
 EdgeLengthJittering <- function(phy)
 ### all edge lengths are added to a random value on U[-MIN, MAX]

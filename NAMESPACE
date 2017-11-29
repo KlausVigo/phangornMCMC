@@ -3,7 +3,7 @@ export(.phangornMCMCenv, cleanMCMCtrees, phangornMCMC, dcoal,
        dcoal.linear, dcoal.step, dcoal.time, dcoal.time2,
        EdgeLengthJittering, getLastTree, getMCMCstats, getMCMCtrees,
        NeighborhoodRearrangement, saveMCMCtrees,
-       TipInterchange, ddirichlet, rdirichlet, rdirichlet1)
+       ddirichlet, rdirichlet, rdirichlet1)
 
 importFrom(ape, as.phylo, branching.times, dist.dna, Ntip,
            reorder.phylo, write.nexus, write.tree, fastme.bal)
