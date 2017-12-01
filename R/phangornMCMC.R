@@ -22,6 +22,7 @@
 #' \dontrun{
 #' require(phangorn)
 #' data(yeast)
+#' yeast <- subset(yeast, ,1:1000, site.pattern = FALSE)
 #' out <- phangornMCMC(yeast)
 #' plot(out)
 #' getMCMCtrees()
@@ -29,7 +30,7 @@
 #'
 phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
     tree0 = NULL, model = NULL, printevery = 100, bf=baseFreq(x), Q=rep(1, 6),
-    optBf = FALSE, optQ = FALSE, rooted=TRUE)
+    optBf = FALSE, optQ = FALSE, rooted=TRUE, NNI=TRUE)
 {
     on.exit({
         pml.free()
@@ -136,33 +137,34 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
         if (verbose) if (! i %% printevery)
             cat("\r  ", i, "                ", j, "           ")
 
-        # tree rearrangements rooted trees
-
-        ## select one internal node excluding the root:
-        target <- sample(nodesToSample, 1L) # target node for rearrangement
-        THETA <- f.theta(bt0[target - n], para0) # the value of THETA at this node
-
-        tr.b <- NeighborhoodRearrangement(tree0, n, nodeMax, target, THETA, bt0)
-        ## do TipInterchange() every 10 steps:
-        ## tr.b <-
-        ##     if (! i %% 10) TipInterchange(tree0, n)
-        ##     else NeighborhoodRearrangement(tree0, n, nodeMax, target, THETA, bt0)
-
-        if (!(i %% frequency) && i > burnin) {
-            k <- k + 1L
-            TREES[[k]] <- tr.b
-        }
+        if(NNI){
+            # tree rearrangements rooted trees
+            if(rooted){
+            ## select one internal node excluding the root:
+                target <- sample(nodesToSample, 1L) # target node for rearrangement
+                THETA <- f.theta(bt0[target - n], para0) # the value of THETA at this node
+                tr.b <- NeighborhoodRearrangement(tree0, n, nodeMax, target, THETA, bt0)
+            }
+            else {
+                tr.b <- rNNI(tree0)
+            }
+# add if reject or not???
+``        }
         lnL.b <- getlogLik(tr.b, x)
         LL[i] <- lnL.b
         ## calculate theta for the proposed tree:
-        bt <- branching.times(tr.b)
-        params[i, ] <- para <- getparams(tr.b, bt)
+#        bt <- branching.times(tr.b)
+#        params[i, ] <- para <- getparams(tr.b, bt)
         i <- i + 1L
         ACCEPT <- if (is.na(lnL.b)) FALSE else {
             if (lnL.b >= lnL0) TRUE
             else rbinom(1, 1, exp(lnL.b - lnL0))
         }
         if (ACCEPT) {
+            if (!(i %% frequency) && i > burnin) {
+                k <- k + 1L
+                TREES[[k]] <- tr.b
+            }
             j <- j + 1L
             lnL0 <- lnL.b
             tree0 <- tr.b
@@ -171,9 +173,9 @@ phangornMCMC <- function(x, ntrees = 3000, burnin = 1000, frequency = 1,
         }
 
         if(optBf){
-#            bftmp <- rdirichlet1(nstates)
+#            prop <-
+#            bftmp <- ddirichlet(nstates)
 #            lltmp <- pml.fit(phy, x, bf = bf, eig = eig, INV = INV, ll.0 = ll.0)
-
         }
 
 

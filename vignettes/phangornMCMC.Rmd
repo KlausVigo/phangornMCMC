@@ -1,7 +1,6 @@
 ---
 title: "phangornMCMC"
 author: "Klaus Schliep"
-date: "March 19, 2017"
 output: html_document
 ---
 
@@ -25,21 +24,42 @@ Adopted from Yang 2014
     a. Propose tree rearrangement
         start with NNI from colaescentMCMC
     b. Propose changes to edge weights
-        sliding window?? (TODO)
+        sliding window?? (TODO) exponential prior (gamma prior)
     c. Propose changes to substitution parameter (bf and Q)
-        bf (TODO) dirichlet
-        Q (TODO) dirichlet
+        bf (TODO) dirichlet prior
+        Q (TODO) dirichlet prior
     d. Propose changes to gamma rate or invariant sites
+        invariant sites  beta prior
     e. Every k iteration, sample the chain save tree and parameters
 3. At the end summarize results
 
 
 
-## Priors for the different parameters 
+## Priors and proposals for the different parameters 
+
+
 
 | Data type   | State frequencies | Substitution rates |
 |-------------|-------------------|--------------------| 
 | Nucleotides | fixed / estimated | fixed / estimated  |
 |             | (Dirichlet)       | (Dirichlet)        |
 
+bf = "equal", "empirical", "estimate".
+In case estimate, we have to define prior, proposal step and Hastings ratio.  
 
+
+
+## Tree rearrangements and edge length changes
+
+### NNI for unrooted trees
+
+rNNI
+
+Use proportional scaling for unrooted trees, Hastings factor is $c = x'/x$.  
+
+### NNI for rooted trees
+
+rNNI for rooted trees
+
+
+Yang 2014
